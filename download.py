@@ -89,16 +89,13 @@ class VideoDownloader(object):
         finally:
             # clean all ts files and f'{guid}.txt'
             try:
-                # self.status.info(f"Removing file {file_path}")
                 os.remove(file_path)
                 for ts_file in ts_files:
-                    # self.status.info(f"Removing file {os.path.join(sub_dir, ts_file)}")
                     os.remove(os.path.join(sub_dir, ts_file))
                 # move to parent dir
                 shutil.move(new_name, self.output)
                 shutil.rmtree(sub_dir)
             except Exception as cleanup_error:
-                # self.status.error(f"Error during cleanup: {cleanup_error}")
                 raise cleanup_error
 
     def fetch_ts(self, sub_dir: str, ts_url: str) -> None:
@@ -112,7 +109,6 @@ class VideoDownloader(object):
                         if chunk:
                             f.write(chunk)
         except Exception as e:
-            # self.status.error(f"Fetch ts file {file_name} error:{e}")
             raise e
 
 
@@ -220,7 +216,7 @@ class VideoCrawler(object):
                             "vid": video["video_id"],
                             "guid": video["guid"],
                         }
-                        # 判断guid是否重复，重复则不添加
+                        # ignore same video by checking guid
                         if video_info["guid"] in same_guids:
                             continue
                         same_guids.add(video_info["guid"])
