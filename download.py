@@ -30,7 +30,6 @@ class VideoDownloader(object):
             url = f"https://vdn.apps.cntv.cn/api/getHttpVideoInfo.do?pid={guid}&client=flash&im=0&vn=2049&wlan="
             out_path = os.path.join(self.output, guid)
             os.makedirs(out_path, exist_ok=True)
-            exec_tasks = []
             try:
                 resp = requests.get(url, headers=self.headers, timeout=self.default_timeout)
                 if resp.status_code == 200:
@@ -42,12 +41,13 @@ class VideoDownloader(object):
                 raise Exception(f"Extract video information error:{e}")
 
     def fetch_m3u8(self, m3u8_url: str, out_path: str = None, file_name: str = None) -> None:
-        host = extract_host(m3u8_url)
         try:
             resp = requests.get(m3u8_url, headers=self.headers, timeout=self.default_timeout)
             if resp.status_code == 200:
                 lines = resp.text.splitlines()
                 m3u8_files = [line for line in lines if line.endswith(".m3u8")]
+
+                host = extract_host(m3u8_url)
                 hd_m3u8_url = host + m3u8_files[0] if m3u8_files else None
                 if hd_m3u8_url is not None:
                     response = requests.get(hd_m3u8_url, headers=self.headers, timeout=self.default_timeout)
